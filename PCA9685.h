@@ -26,12 +26,14 @@
 #define PCA9685_OUTDRV 0x04 // 1: totem pole, 0: open-drain
 #define PCA9685_OUTNE 0x03 // output disabled leads to... 00: LEDs off, 01: LEDs on, 10: LEDs high impendance
 
+#define PCA9685_DEBUG true
+
 class PCA9685{
   public:
     PCA9685();
     PCA9685(const uint8_t address);
     void begin();
-    void setPWMFrequency(uint8_t frequency);
+    void setPWMFrequency(uint16_t frequency);
     void setOutputMode(bool totempole);
     void setOutput(uint8_t number, uint16_t on, uint16_t off);
     void setOutput(uint8_t number, uint16_t pwmvalue);
@@ -39,6 +41,7 @@ class PCA9685{
     const uint8_t i2c_address;
     uint8_t readByte(uint8_t address);
     void writeByte(uint8_t address, uint8_t data);
+    void writeFourBytes(uint8_t address, uint8_t data0, uint8_t data1, uint8_t data2, uint8_t data3);
     void writeBytes(uint8_t address, uint8_t data[], uint8_t length);
 };
 

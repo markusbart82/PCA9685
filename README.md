@@ -43,7 +43,8 @@ void setOutput(uint8_t number, uint16_t pwmvalue);
 
 ## Minimum viable code
 ```cpp
-PCA9685 pwm = new PCA9685();
+PCA9685 pwm;
+Wire.begin();
 pwm.begin();
 pwm.setOutput(0, 4095);
 ```
