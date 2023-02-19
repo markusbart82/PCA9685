@@ -29,9 +29,14 @@ void setOutputMode(bool totempole);
 
 ## Controling LEDs
 ```cpp
-// numer: 0..15
+// number: 0..15
 // on/off: 0..4095 for normal operation, 4096 to set always on / always off flag
 void setOutput(uint8_t number, uint16_t on, uint16_t off);
+
+// number: 0..15
+// pwmvalue: 0..4095
+// automatically sets the always on / always off flags
+void setOutput(uint8_t number, uint16_t pwmvalue);
 ```
 
 # Examples
@@ -40,5 +45,5 @@ void setOutput(uint8_t number, uint16_t on, uint16_t off);
 ```cpp
 PCA9685 pwm = new PCA9685();
 pwm.begin();
-pwm.setOutput(0, 0, 4095);
+pwm.setOutput(0, 4095);
 ```

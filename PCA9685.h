@@ -34,6 +34,7 @@ class PCA9685{
     void setPWMFrequency(uint8_t frequency);
     void setOutputMode(bool totempole);
     void setOutput(uint8_t number, uint16_t on, uint16_t off);
+    void setOutput(uint8_t number, uint16_t pwmvalue);
   private:
     const uint8_t i2c_address;
     uint8_t readByte(uint8_t address);

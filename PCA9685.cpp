@@ -51,6 +51,26 @@ void PCA9685::setOutput(uint8_t number, uint16_t on, uint16_t off){
   writeBytes((PCA9685_FIRSTLED + (4*number)), data, 4);
 }
 
+// sets PWM value, including control of the always on / always off flags
+void PCA9685::setOutput(uint8_t number, uint16_t pwmvalue){
+  uint8_t on = 0;
+  uint8_t off = 0;
+  if(pwmvalue > 4095){
+    // always on
+    on = 4096;
+    off = 0;
+  }else if(pwmvalue == 0){
+    // always off
+    on = 0;
+    off = 4096;
+  }else{
+    // pwm value
+    on = 0;
+    off = pwmvalue;
+  }
+  setOutput(number, on, off);
+}
+
 // read a byte from I2C
 uint8_t PCA9685::readByte(uint8_t address){
   Wire.beginTransmission(i2c_address);
