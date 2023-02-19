@@ -7,19 +7,30 @@ This library only provides basic functionality, and uses Arduino's Wire library,
 
 ## Constructors
 ```cpp
+// constructor with default address (0x40)
 PCA9685();
+
+// constructor with custom address
 PCA9685(conconst uint8_t address);
 ```
 
 ## Initialization and configuration
 ```cpp
+// initializes the library
 void begin();
+
+// frequency: 24..1526
 void setPWMFrequency(uint8_t frequency);
+
+// true: totem pole
+// false: open drain
 void setOutputMode(bool totempole);
 ```
 
 ## Controling LEDs
 ```cpp
+// numer: 0..15
+// on/off: 0..4095 for normal operation, 4096 to set always on / always off flag
 void setOutput(uint8_t number, uint16_t on, uint16_t off);
 ```
 
