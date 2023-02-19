@@ -5,6 +5,7 @@
 #include <Wire.h>
 
 // addresses
+#define PCA9685_DEFAULT_I2C_ADDRESS 0x40
 #define PCA9685_MODE1 0x00 // mode register 1
 #define PCA9685_MODE2 0x01 // mode register 2
 #define PCA9685_FIRSTLED 0x06 // each LED has ON_L, ON_H, OFF_L, OFF_H addresses
@@ -32,10 +33,12 @@ class PCA9685{
     void begin();
     void setPWMFrequency(uint8_t frequency);
     void setOutputMode(bool totempole);
-    void setOutput(uint8_t number, uint8_t on, uint8_t off);
+    void setOutput(uint8_t number, uint16_t on, uint16_t off);
   private:
     const uint8_t i2c_address;
     uint8_t readByte(uint8_t address);
     void writeByte(uint8_t address, uint8_t data);
     void writeBytes(uint8_t address, uint8_t data[], uint8_t length);
-}
+};
+
+#endif

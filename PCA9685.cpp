@@ -8,14 +8,10 @@
 #include <Wire.h>
 
 // constructor with default address
-PCA9685::PCA9685(){
-  i2c_address = 0x40;
-}
+PCA9685::PCA9685():i2c_address(PCA9685_DEFAULT_I2C_ADDRESS){}
 
 // constructor with provided address
-PCA9685::PCA9685(const uint8_t address){
-  i2c_address = address;
-}
+PCA9685::PCA9685(const uint8_t address):i2c_address(address){}
 
 // initialize everything
 void PCA9685::begin(){
@@ -61,7 +57,7 @@ uint8_t PCA9685::readByte(uint8_t address){
   Wire.write(address);
   Wire.endTransmission();
   Wire.requestFrom(i2c_address, 1);
-  return wire.read();
+  return Wire.read();
 }
 
 // write a byte to I2C
