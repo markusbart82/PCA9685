@@ -5,16 +5,22 @@ This library only provides basic functionality, and uses Arduino's Wire library,
 
 # API
 ## Constructors
+```cpp
 PCA9685();
 PCA9685(conconst uint8_t address);
+```
 
 ## Initialization and configuration
+```cpp
 void begin();
 void setPWMFrequency(uint8_t frequency);
 void setOutputMode(bool totempole);
+```
 
 ## Controling LEDs
+```cpp
 void setOutput(uint8_t number, uint8_t on, uint8_t off);
+```
 
 # Examples
 
