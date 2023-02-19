@@ -20,7 +20,7 @@ void setOutputMode(bool totempole);
 
 ## Controling LEDs
 ```cpp
-void setOutput(uint8_t number, uint8_t on, uint8_t off);
+void setOutput(uint8_t number, uint16_t on, uint16_t off);
 ```
 
 # Examples
