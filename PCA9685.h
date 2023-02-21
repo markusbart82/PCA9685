@@ -32,6 +32,7 @@ class PCA9685{
   public:
     PCA9685();
     PCA9685(const uint8_t address);
+    uint8_t getAddress();
     void begin();
     void setPWMFrequency(uint16_t frequency);
     void setOutputMode(bool totempole);

@@ -13,6 +13,10 @@ PCA9685::PCA9685():i2c_address(PCA9685_DEFAULT_I2C_ADDRESS){}
 // constructor with provided address
 PCA9685::PCA9685(const uint8_t address):i2c_address(address){}
 
+uint8_t PCA9685::getAddress(){
+  return this->i2c_address;
+}
+
 // initialize everything
 void PCA9685::begin(){
   // default mode: auto increment activated, other features off
