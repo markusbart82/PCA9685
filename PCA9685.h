@@ -26,7 +26,7 @@
 #define PCA9685_OUTDRV 0x04 // 1: totem pole, 0: open-drain
 #define PCA9685_OUTNE 0x03 // output disabled leads to... 00: LEDs off, 01: LEDs on, 10: LEDs high impendance
 
-#define PCA9685_DEBUG true
+#define PCA9685_DEBUG false
 
 class PCA9685{
   public:

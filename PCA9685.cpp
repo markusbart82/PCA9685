@@ -65,10 +65,10 @@ void PCA9685::setOutputMode(bool totempole){
 // 0..4095 for data values, 4096 to set the always on / always off bits
 void PCA9685::setOutput(uint8_t number, uint16_t on, uint16_t off){
   uint8_t data[4];
-  data[0] = (uint8_t)(on & 0x00FF);
-  data[1] = (uint8_t)((on & 0xFF)>>8);
-  data[2] = (uint8_t)(off & 0x00FF);
-  data[1] = (uint8_t)((off & 0xFF)>>8);
+  data[0] = (uint8_t)(on & 0xFF); // ON_L
+  data[1] = (uint8_t)((on>>8) & 0x1F); // ON_H
+  data[2] = (uint8_t)(off & 0xFF); // OFF_L
+  data[3] = (uint8_t)((off>>8) & 0x1F); // OFF_H
 #if(PCA9685_DEBUG == true)
   Serial.print("writing to address ");
   Serial.print((PCA9685_FIRSTLED + (4*number)));
@@ -87,9 +87,9 @@ void PCA9685::setOutput(uint8_t number, uint16_t on, uint16_t off){
 
 // sets PWM value, including control of the always on / always off flags
 void PCA9685::setOutput(uint8_t number, uint16_t pwmvalue){
-  uint8_t on = 0;
-  uint8_t off = 0;
-  if(pwmvalue > 4095){
+  uint16_t on = 0;
+  uint16_t off = 0;
+  if(pwmvalue >= 4095){
     // always on
     on = 4096;
     off = 0;
