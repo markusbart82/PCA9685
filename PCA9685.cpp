@@ -40,7 +40,10 @@ void PCA9685::setPWMFrequency(uint16_t frequency){
   Serial.print(") --> prescaler = ");
   Serial.println(prescaler);
 #endif
+  // only allowed while sleep is active, so sleep, set prescaler, unsleep
+  sleep();
   writeByte(PCA9685_PRESCALER, prescaler);
+  unsleep();
 }
 
 // configure outputs to either totem pole or open drain
@@ -58,6 +61,18 @@ void PCA9685::setOutputMode(bool totempole){
   Serial.println(mode2);
 #endif
   writeByte(PCA9685_MODE2, mode2);
+}
+
+void PCA9685::sleep(){
+  uint8_t mode1 = readByte(PCA9685_MODE1);
+  mode1 |= PCA9685_SLEEP;
+  writeByte(PCA9685_MODE1, mode1);
+}
+
+void PCA9685::unsleep(){
+  uint8_t mode1 = readByte(PCA9685_MODE1);
+  mode1 &= ~PCA9685_SLEEP;
+  writeByte(PCA9685_MODE1, mode1);
 }
 
 // sets on and off times of one LED
@@ -112,6 +127,65 @@ void PCA9685::setOutput(uint8_t number, uint16_t pwmvalue){
   Serial.println(")");
 #endif
   setOutput(number, on, off);
+}
+
+// sets [count] number of outputs to their PWM values, spreadíng the on/off times to decrease EMI
+// the algorithm overlaps the on-times as much as necessary to fit within the 4096 steps
+void PCA9685::setOutputs(uint8_t count, uint16_t pwmvalue[]){
+  int totalOnTimeOfDimmedLEDs = 0; // length of total non-off, non-on, dimmed LED on-time
+  int numberOfDimmedLEDs = 0;
+  for(int i = 0; i < count; i++){
+    if(pwmvalue[i] > 0 && pwmvalue[i] < 4095){
+      totalOnTimeOfDimmedLEDs += pwmvalue[i];
+      numberOfDimmedLEDs++;
+    }
+  }
+  // the individual overlap is the total "too much" time, divided by the number of LEDs
+  // overlap is allowed to become negative, this will space out the short on-times over the available time
+  int overlap = (totalOnTimeOfDimmedLEDs - 4095) / numberOfDimmedLEDs;
+  uint16_t on[16];
+  uint16_t off[16];
+  uint16_t currentoffset = 0;
+  for(int i = 0; i < count; i++){
+    if(pwmvalue[i] > 0 && pwmvalue[i] < 4095){
+      // this is a dimmed LED, apply offset
+      on[i] = 0 + currentoffset;
+      off[i] = pwmvalue[i] + currentoffset;
+      currentoffset = 4096 + off[i] - overlap;
+      // normalize to 0..4095
+      while(on[i] > 4095){on[i] -= 4096;}
+      while(off[i] > 4095){off[i] -= 4096;}
+    }else if(pwmvalue[i] == 0){
+      // LED is off
+      on[i] = 0;
+      off[i] = 4096;
+    }else{
+      // LED is on
+      on[i] = 4096;
+      off[i] = 0;
+    }
+  }
+  // convert to byte array: ON_L, ON_H, OFF_L, OFF_H
+  int dataindex = 0;
+  uint8_t data[64];
+  for(int i = 0; i < count; i++){
+    data[0 + dataindex] = (uint8_t)(on[i] & 0xFF); // ON_L
+    data[1 + dataindex] = (uint8_t)((on[i]>>8) & 0x1F); // ON_H
+    data[2 + dataindex] = (uint8_t)(off[i] & 0xFF); // OFF_L
+    data[3 + dataindex] = (uint8_t)((off[i]>>8) & 0x1F); // OFF_H
+    dataindex += 4;
+#if(PCA9685_DEBUG == true)
+  Serial.print("setOutput(");
+  Serial.print(i);
+  Serial.print(",");
+  Serial.print(on[i]);
+  Serial.print(",");
+  Serial.print(off[i]);
+  Serial.println(")");
+#endif
+  }
+  // send to PWM driver as one block transmission
+  writeBytes(PCA9685_FIRSTLED, data, dataindex);
 }
 
 // read a byte from I2C
